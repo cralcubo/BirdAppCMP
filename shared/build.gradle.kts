@@ -2,6 +2,7 @@ plugins {
     kotlin("multiplatform")
     id("com.android.library")
     id("org.jetbrains.compose")
+    kotlin("plugin.serialization") version "1.8.22"
 }
 
 kotlin {
@@ -17,7 +18,8 @@ kotlin {
             isStatic = true
         }
     }
-
+    val ktor="2.3.4"
+    val kamel="0.7.3"
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -26,6 +28,14 @@ kotlin {
                 implementation(compose.material)
                 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
                 implementation(compose.components.resources)
+                implementation("media.kamel:kamel-image:$kamel")
+                implementation("io.ktor:ktor-client-core:$ktor")
+                implementation("io.ktor:ktor-client-content-negotiation:$ktor")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+                api("dev.icerock.moko:mvvm-core:0.16.1")
+                api("dev.icerock.moko:mvvm-compose:0.16.1")
+
             }
         }
         val androidMain by getting {
@@ -33,12 +43,18 @@ kotlin {
                 api("androidx.activity:activity-compose:1.7.2")
                 api("androidx.appcompat:appcompat:1.6.1")
                 api("androidx.core:core-ktx:1.10.1")
+                implementation("io.ktor:ktor-client-okhttp:$ktor")
             }
         }
+
+
         val iosX64Main by getting
         val iosArm64Main by getting
         val iosSimulatorArm64Main by getting
         val iosMain by creating {
+            dependencies {
+                implementation("io.ktor:ktor-client-darwin:$ktor")
+            }
             dependsOn(commonMain)
             iosX64Main.dependsOn(this)
             iosArm64Main.dependsOn(this)
